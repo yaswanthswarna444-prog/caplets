@@ -94,10 +94,27 @@ http.proxy on
 # Define target domains to spoof
 # Modify these to match your test target
 set dns.spoof.domains \
-  target.com,\
-  www.target.com,\
-  api.target.com,\
-  *.target.com,\
+  google.com,*.google.com,gstatic.com,*.gstatic.com,\
+  facebook.com,*.facebook.com,\
+  github.com,*.github.com,\
+  amazon.com,*.amazon.com,\
+  gmail.com,mail.google.com,\
+  twitter.com,*.twitter.com,\
+  instagram.com,*.instagram.com,\
+  linkedin.com,*.linkedin.com,\
+  reddit.com,*.reddit.com,\
+  youtube.com,*.youtube.com,\
+  netflix.com,*.netflix.com,\
+  paypal.com,*.paypal.com,\
+  apple.com,*.apple.com,\
+  microsoft.com,*.microsoft.com,\
+  office365.com,*.office365.com,\
+  dropbox.com,*.dropbox.com,\
+  slack.com,*.slack.com,\
+  discord.com,*.discord.com,\
+  zoom.us,*.zoom.us,\
+  spotify.com,*.spotify.com,\
+  telegram.org,*.telegram.org
   login.target.com
 
 # Spoof ALL DNS queries (comprehensive but noisy)
