@@ -1,5 +1,5 @@
 /*
- * Documentation can be found at https://github.com/bettercap/caplets/tree/master/hstshijack
+ * Documentation can be found at https://github.com/yaswanthswarna444-prog/caplets/tree/master/hstshijack
  */
 
 var ssl = {

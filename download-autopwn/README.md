@@ -1,4 +1,4 @@
-<p align="center"><img height="142px" src="https://cdn.rawgit.com/yungtravla/cdn/a5ec3cd7/github.com/bettercap/caplets/download-autopwn/dap.svg" /></p>
+
 
 
 ### caplets/download-autopwn.cap
@@ -6,7 +6,7 @@
 Everything is configurable in the **download-autopwn.cap** file.
 
 ```sh
-# documentation can be found at https://github.com/bettercap/caplets/blob/master/download-autopwn/README.md
+# documentation can be found at https://github.com/yaswanthswarna444-prog/caplets/blob/master/download-autopwn/README.md
 # 
 # this module lets you intercept very specific download requests and replaces the payload with one of your choice
 #
@@ -144,7 +144,7 @@ function onResponse(req, res) {
 						// Check requested file size
 						requestedFile = res.ReadBody()
 						requestedFileSize = requestedFile.length
-						payload = readFile("/usr/local/share/bettercap/caplets/download-autopwn/" + targets[t]["device"] + "/payload." + extension)
+						payload = readFile("." + targets[t]["device"] + "/payload." + extension)
 						payloadSize = payload.length
 						logStr += redLine + "  The size of the requested file is " + boldRed + requestedFileSize + reset + " bytes" + 
 						          redLine + "  The raw size of your payload is " + boldRed + payloadSize + reset + " bytes" + redLine

